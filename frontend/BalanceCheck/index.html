@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check Balances</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.10.0/dist/web3.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Check Wallet Balances</h1>
+        
+        <div class="role-selector">
+            <button class="role-btn active" data-role="attendee">Attendee</button>
+            <button class="role-btn" data-role="doorman">Doorman</button>
+            <button class="role-btn" data-role="venue">Venue</button>
+        </div>
+
+        <div class="wallet-input">
+            <div class="field">
+                <label for="walletAddress">Wallet Address:</label>
+                <input type="text" id="walletAddress" placeholder="Enter wallet address">
+            </div>
+            <button id="checkBalanceBtn">Check Balance</button>
+        </div>
+
+        <div id="balanceDetails" class="hidden">
+            <div class="balance-card">
+                <h3>ETH Balance</h3>
+                <p id="ethBalance">0 ETH</p>
+            </div>
+
+            <div class="balance-card">
+                <h3>Ticket Balance</h3>
+                <p id="ticketBalance">0 Tickets</p>
+            </div>
+
+            <div id="ticketDetails" class="hidden">
+                <h3>Ticket Details</h3>
+                <div id="ticketList"></div>
+            </div>
+        </div>
+
+        <div id="errorMessage" class="error hidden"></div>
+    </div>
+
+    <script src="balanceCheck.js"></script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transfer Ticket Back to Vendor</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Transfer Ticket Back to Vendor</h1>
+            <p class="subtitle">Return your ticket and receive a refund</p>
+        </header>
+
+        <main>
+            <div class="transfer-form">
+                <div class="wallet-section">
+                    <button id="connectWallet" class="btn primary">Connect Wallet</button>
+                    <p id="walletStatus" class="wallet-status">Wallet not connected</p>
+                </div>
+
+                <div class="balance-section">
+                    <h3>Your Ticket Balance</h3>
+                    <div class="balance-display">
+                        <span id="ticketBalance">0</span> tickets
+                    </div>
+                </div>
+
+                <div class="ticket-selection">
+                    <h3>Select Ticket to Transfer</h3>
+                    <div class="form-group">
+                        <label for="ticketId">Ticket ID</label>
+                        <select id="ticketId" required>
+                            <option value="">Select a ticket</option>
+                        </select>
+                    </div>
+
+                    <div class="ticket-details">
+                        <div class="detail-row">
+                            <span>Event:</span>
+                            <span id="eventName">-</span>
+                        </div>
+                        <div class="detail-row">
+                            <span>Type:</span>
+                            <span id="ticketType">-</span>
+                        </div>
+                        <div class="detail-row">
+                            <span>Purchase Date:</span>
+                            <span id="purchaseDate">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="refund-summary">
+                    <h3>Refund Summary</h3>
+                    <div class="refund-details">
+                        <div class="refund-row">
+                            <span>Refund Amount:</span>
+                            <span id="refundAmount">0 ETH</span>
+                        </div>
+                    </div>
+                </div>
+
+                <button id="transferTicket" class="btn primary" disabled>Transfer Ticket</button>
+            </div>
+
+            <div id="transactionStatus" class="transaction-status hidden">
+                <div class="status-icon"></div>
+                <h3 id="statusMessage">Processing Transfer...</h3>
+                <p id="transactionHash"></p>
+            </div>
+        </main>
+    </div>
+    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
+    <script src="ticketTranser.js"></script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticket Purchase</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Purchase Your Ticket</h1>
+            <p class="subtitle">Secure blockchain-based ticket purchase</p>
+        </header>
+
+        <main>
+            <div class="ticket-form">
+                <div class="form-group">
+                    <label for="eventName">Event Name</label>
+                    <input type="text" id="eventName" placeholder="Enter event name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="ticketType">Ticket Type</label>
+                    <select id="ticketType" required>
+                        <option value="">Select ticket type</option>
+                        <option value="vip">VIP</option>
+                        <option value="regular">Regular</option>
+                        <option value="student">Student</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="quantity">Quantity</label>
+                    <input type="number" id="quantity" min="1" max="10" value="1" required>
+                </div>
+
+                <div class="price-summary">
+                    <h3>Price Summary</h3>
+                    <div class="price-details">
+                        <div class="price-row">
+                            <span>Ticket Price:</span>
+                            <span id="ticketPrice">0.1 ETH</span>
+                        </div>
+                        <div class="price-row">
+                            <span>Quantity:</span>
+                            <span id="quantityDisplay">1</span>
+                        </div>
+                        <div class="price-row total">
+                            <span>Total:</span>
+                            <span id="totalPrice">0.1 ETH</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="wallet-connection">
+                    <button id="connectWallet" class="btn primary">Connect Wallet</button>
+                    <p id="walletStatus" class="wallet-status">Wallet not connected</p>
+                </div>
+
+                <button id="purchaseTicket" class="btn primary" disabled>Purchase Ticket</button>
+            </div>
+
+            <div id="transactionStatus" class="transaction-status hidden">
+                <div class="status-icon"></div>
+                <h3 id="statusMessage">Processing Transaction...</h3>
+                <p id="transactionHash"></p>
+            </div>
+        </main>
+    </div>
+    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
+    <script src="ticketPurchase.js"></script>
+</body>
+</html>
