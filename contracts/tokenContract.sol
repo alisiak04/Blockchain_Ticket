@@ -21,8 +21,8 @@ contract TicketToken is IERC20 {
     address public owner;
     
     // Ticket specific variables
-    uint256 public constant TICKET_PRICE = 0.1 ether; // Price in SETH
-    uint256 public constant MAX_TICKETS = 1000;
+    uint256 public constant TICKET_PRICE = 0.1 ether; // Price in SETH -> per ticket? should i let doorman handle this
+    uint256 public constant MAX_TICKETS = 1000;  // check if i can use this , should i limit tickets maybe for certain events!!!
     mapping(uint256 => bool) public isValidTicket;
     
     // Standard ERC20 mappings
@@ -95,7 +95,7 @@ contract TicketToken is IERC20 {
     }
     
     // Ticket specific functions
-    function purchaseTicket() external payable {
+    function purchaseTicket() external payable {    // not sure if i should handle ticket methods in smart contract 
         require(msg.value >= TICKET_PRICE, "Insufficient SETH sent");
         require(_balances[address(this)] > 0, "No tickets available");
         

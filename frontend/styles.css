@@ -1,0 +1,322 @@
+/* Global Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: #0a0a0a;
+    color: #ffffff;
+    display: flex;
+    justify-content: center;
+    padding: 2rem;
+    min-height: 100vh;
+    margin: 0;
+    background-image: 
+        radial-gradient(circle at 20% 20%, rgba(76, 0, 255, 0.15) 0%, transparent 40%),
+        radial-gradient(circle at 80% 80%, rgba(0, 149, 255, 0.15) 0%, transparent 40%);
+}
+
+.container {
+    background: rgba(20, 20, 20, 0.8);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    padding: 2rem;
+    max-width: 600px;
+    width: 100%;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: #ffffff;
+    font-size: 2rem;
+    text-shadow: 0 0 10px rgba(76, 0, 255, 0.3);
+}
+
+.subtitle {
+    color: #b3b3b3;
+    font-size: 1.1rem;
+}
+
+/* Form Styles */
+.form-group, .field {
+    margin-bottom: 1.5rem;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #b3b3b3;
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: #ffffff;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: #4c00ff;
+    box-shadow: 0 0 0 2px rgba(76, 0, 255, 0.2);
+}
+
+/* Button Styles */
+.btn, button {
+    background: linear-gradient(45deg, #4c00ff, #0095ff);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 24px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    width: 100%;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn:hover, button:hover {
+    background: linear-gradient(45deg, #0095ff, #4c00ff);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(76, 0, 255, 0.3);
+}
+
+.btn:disabled, button:disabled {
+    background: rgba(255, 255, 255, 0.1);
+    cursor: not-allowed;
+    color: #666;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Card Styles */
+.card, .transfer-form, .ticket-form {
+    background: rgba(20, 20, 20, 0.8);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    padding: 2rem;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Wallet Connection Styles */
+.wallet-section {
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.wallet-status {
+    margin-top: 0.5rem;
+    color: #b3b3b3;
+    font-size: 0.9rem;
+}
+
+/* Balance Display Styles */
+.balance-section, .balance-card {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.balance-display {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #ffffff;
+    margin-top: 0.5rem;
+    text-shadow: 0 0 10px rgba(76, 0, 255, 0.3);
+}
+
+/* Ticket Styles */
+.ticket-selection {
+    margin-bottom: 2rem;
+}
+
+.ticket-details {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-top: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+}
+
+.detail-row:last-child {
+    border-bottom: none;
+}
+
+/* Price and Refund Summary Styles */
+.price-summary, .refund-summary {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.price-details, .refund-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.price-row, .refund-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    color: #ffffff;
+}
+
+.price-row.total, .refund-row {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: 0.5rem;
+    padding-top: 1rem;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+/* Transaction Status Styles */
+.transaction-status {
+    margin-top: 2rem;
+    text-align: center;
+    padding: 1.5rem;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.transaction-status.hidden {
+    display: none;
+}
+
+.status-icon {
+    width: 50px;
+    height: 50px;
+    margin: 0 auto 1rem;
+    border-radius: 50%;
+    background: linear-gradient(45deg, #4c00ff, #0095ff);
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(76, 0, 255, 0.7);
+    }
+    
+    70% {
+        transform: scale(1);
+        box-shadow: 0 0 0 10px rgba(0, 149, 255, 0);
+    }
+    
+    100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(76, 0, 255, 0);
+    }
+}
+
+#transactionHash {
+    margin-top: 1rem;
+    font-family: monospace;
+    word-break: break-all;
+    font-size: 0.9rem;
+    color: #b3b3b3;
+}
+
+/* Success/Error States */
+.success {
+    color: #4CAF50;
+}
+
+.error {
+    color: #f44336;
+}
+
+/* Role Selector Styles */
+.role-selector {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.role-btn {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.role-btn.active {
+    background: linear-gradient(45deg, #4c00ff, #0095ff);
+    border: none;
+}
+
+/* Download Button */
+.download-btn {
+    display: inline-block;
+    background: linear-gradient(45deg, #4c00ff, #0095ff);
+    color: white;
+    padding: 12px 24px;
+    text-decoration: none;
+    border-radius: 8px;
+    margin-top: 1rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.download-btn:hover {
+    background: linear-gradient(45deg, #0095ff, #4c00ff);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(76, 0, 255, 0.3);
+}
+
+/* Hidden Class */
+.hidden {
+    display: none;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(45deg, #4c00ff, #0095ff);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(45deg, #0095ff, #4c00ff);
+} 
