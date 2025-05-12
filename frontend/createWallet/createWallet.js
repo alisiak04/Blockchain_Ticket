@@ -5,24 +5,33 @@ document.getElementById("createWalletBtn").addEventListener("click", () => {
     return;
   }
 
+  //making a new wallet
   const web3 = new Web3();
   const wallet = web3.eth.accounts.create();
 
-  // Show wallet details
+  //wallet info goes into localStorage
+  localStorage.setItem('walletAddress', wallet.address);
+  localStorage.setItem('privateKey', wallet.privateKey);
+
+  //showing user the wallet details
   document.getElementById("walletDetails").classList.remove("hidden");
   document.getElementById("walletAddress").value = wallet.address;
   document.getElementById("privateKey").value = wallet.privateKey;
 
+  //making keystore file that user can download
   const keystore = web3.eth.accounts.encrypt(wallet.privateKey, password);
   const keystoreStr = JSON.stringify(keystore);
   document.getElementById("keystore").value = keystoreStr;
 
-  // Create download blob
+  //create download blob
   const blob = new Blob([keystoreStr], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const downloadLink = document.getElementById("downloadKeystore");
   downloadLink.href = url;
   downloadLink.download = `${wallet.address}.json`;
+
+  //storing contract address
+  localStorage.setItem('contractAddress', '0xYourDeployedTicketTokenAddress'); 
 });
 
 function copyToClipboard(id) {

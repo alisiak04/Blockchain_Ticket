@@ -19,141 +19,172 @@ contract TicketToken is IERC20 {
     uint8 public decimals;
     uint256 private _totalSupply;
     address public owner;
-    
-    // Ticket specific variables
-    uint256 public constant TICKET_PRICE = 0.1 ether; // Price in SETH -> per ticket? should i let doorman handle this
-    uint256 public constant MAX_TICKETS = 1000;  // check if i can use this , should i limit tickets maybe for certain events!!!
-    mapping(uint256 => bool) public isValidTicket;
-    
-    // Standard ERC20 mappings
+
+    struct Event {
+        string name;
+        uint256 price;
+        uint256 maxTickets;
+        uint256 ticketsSold;
+        bool isActive;
+    }
+
+    struct Ticket {
+        uint256 eventId;
+        uint256 purchaseTime;
+        bool isValid;
+    }
+
+    mapping(uint256 => Event) public events;
+    mapping(uint256 => Ticket) public tickets;
+    mapping(address => uint256[]) public userTickets;
     mapping(address => uint256) private _balances;
     mapping(address => mapping(address => uint256)) private _allowances;
-    
-    // Ticket specific events
-    event TicketPurchased(address indexed buyer, uint256 ticketId, uint256 amount);
-    event TicketReturned(address indexed seller, uint256 ticketId, uint256 amount);
-    
+
+    event EventCreated(uint256 indexed eventId, string name, uint256 price, uint256 maxTickets);
+    event TicketPurchased(address indexed buyer, uint256 indexed eventId, uint256 ticketId, uint256 price);
+    event TicketReturned(address indexed seller, uint256 indexed eventId, uint256 ticketId, uint256 refundAmount);
+
+    uint256 public nextEventId;
+    uint256 public nextTicketId;
+
     constructor(string memory _name, string memory _symbol, uint8 _decimals) {
         name = _name;
         symbol = _symbol;
         decimals = _decimals;
         owner = msg.sender;
-        
-        // Mint initial supply of tickets to contract
-        _totalSupply = MAX_TICKETS;
-        _balances[address(this)] = _totalSupply;
-        emit Transfer(address(0), address(this), _totalSupply);
     }
-    
-    // Standard ERC20 functions
+
+    // IERC20 standard
     function totalSupply() external view override returns (uint256) {
         return _totalSupply;
     }
-    
+
     function balanceOf(address account) external view override returns (uint256) {
         return _balances[account];
     }
-    
+
     function transfer(address recipient, uint256 amount) external override returns (bool) {
         _transfer(msg.sender, recipient, amount);
         return true;
     }
-    
-    function allowance(address owner, address spender) external view override returns (uint256) {
-        return _allowances[owner][spender];
+
+    function allowance(address _owner, address spender) external view override returns (uint256) {
+        return _allowances[_owner][spender];
     }
-    
+
     function approve(address spender, uint256 amount) external override returns (bool) {
         _approve(msg.sender, spender, amount);
         return true;
     }
-    
+
     function transferFrom(address sender, address recipient, uint256 amount) external override returns (bool) {
         require(_allowances[sender][msg.sender] >= amount, "ERC20: transfer amount exceeds allowance");
         _transfer(sender, recipient, amount);
         _approve(sender, msg.sender, _allowances[sender][msg.sender] - amount);
         return true;
     }
-    
-    // Internal functions
+
     function _transfer(address sender, address recipient, uint256 amount) internal {
         require(sender != address(0), "ERC20: transfer from the zero address");
         require(recipient != address(0), "ERC20: transfer to the zero address");
         require(_balances[sender] >= amount, "ERC20: transfer amount exceeds balance");
-        
+
         _balances[sender] -= amount;
         _balances[recipient] += amount;
         emit Transfer(sender, recipient, amount);
     }
-    
-    function _approve(address owner, address spender, uint256 amount) internal {
-        require(owner != address(0), "ERC20: approve from the zero address");
+
+    function _approve(address _owner, address spender, uint256 amount) internal {
+        require(_owner != address(0), "ERC20: approve from the zero address");
         require(spender != address(0), "ERC20: approve to the zero address");
-        
-        _allowances[owner][spender] = amount;
-        emit Approval(owner, spender, amount);
+
+        _allowances[_owner][spender] = amount;
+        emit Approval(_owner, spender, amount);
     }
-    
-    // Ticket specific functions
-    function purchaseTicket() external payable {    // not sure if i should handle ticket methods in smart contract 
-        require(msg.value >= TICKET_PRICE, "Insufficient SETH sent");
-        require(_balances[address(this)] > 0, "No tickets available");
-        
-        // Calculate ticket ID
-        uint256 ticketId = MAX_TICKETS - _balances[address(this)];
-        
-        // Transfer one ticket to the buyer
-        _transfer(address(this), msg.sender, 1);
-        isValidTicket[ticketId] = true;
-        
-        // Refund excess SETH if any
-        if (msg.value > TICKET_PRICE) {
-            payable(msg.sender).transfer(msg.value - TICKET_PRICE);
+
+    // Event Functions
+    function createEvent(string memory _name, uint256 _price, uint256 _maxTickets) external {
+        require(msg.sender == owner, "Only owner can create events");
+        require(_maxTickets > 0, "Max tickets must be greater than 0");
+
+        events[nextEventId] = Event(_name, _price, _maxTickets, 0, true);
+        emit EventCreated(nextEventId, _name, _price, _maxTickets);
+        nextEventId++;
+    }
+
+    function purchaseTicket(uint256 eventId) external payable {
+        Event storage event_ = events[eventId];
+        require(event_.isActive, "Event is not active");
+        require(event_.ticketsSold < event_.maxTickets, "Event is sold out");
+        require(msg.value >= event_.price, "Insufficient ETH sent");
+
+        uint256 ticketId = nextTicketId++;
+        tickets[ticketId] = Ticket(eventId, block.timestamp, true);
+        userTickets[msg.sender].push(ticketId);
+        event_.ticketsSold++;
+
+        _balances[msg.sender]++;
+        _totalSupply++;
+
+        if (msg.value > event_.price) {
+            payable(msg.sender).transfer(msg.value - event_.price);
         }
-        
-        emit TicketPurchased(msg.sender, ticketId, TICKET_PRICE);
+
+        emit TicketPurchased(msg.sender, eventId, ticketId, event_.price);
     }
-    
-    function returnTicket() external {
+
+    function returnTicket(uint256 ticketId) external {
+        Ticket storage ticket = tickets[ticketId];
+        require(ticket.isValid, "Ticket is already invalid");
         require(_balances[msg.sender] > 0, "No tickets to return");
-        
-        uint256 ticketId = MAX_TICKETS - _balances[address(this)] - 1;
-        require(isValidTicket[ticketId], "Ticket already returned");
-        
-        // Transfer ticket back to contract
-        _transfer(msg.sender, address(this), 1);
-        isValidTicket[ticketId] = false;
-        
-        // Refund the ticket price
-        payable(msg.sender).transfer(TICKET_PRICE);
-        
-        emit TicketReturned(msg.sender, ticketId, TICKET_PRICE);
-    }
-    
-    function verifyTicket(address holder) external view returns (bool) {
-        return _balances[holder] > 0;
-    }
-    
-    function getTicketDetails(address holder) external view returns (
-        uint256 balance,
-        uint256[] memory ticketIds
-    ) {
-        balance = _balances[holder];
-        ticketIds = new uint256[](balance);
-        
-        uint256 currentIndex = 0;
-        for (uint256 i = 0; i < MAX_TICKETS; i++) {
-            if (isValidTicket[i]) {
-                ticketIds[currentIndex] = i;
-                currentIndex++;
-                if (currentIndex == balance) break;
+
+        uint256 refundAmount = (events[ticket.eventId].price * 80) / 100;
+        ticket.isValid = false;
+
+        _balances[msg.sender]--;
+        _totalSupply--;
+
+        // remove ticket from userTickets
+        uint256[] storage tix = userTickets[msg.sender];
+        for (uint256 i = 0; i < tix.length; i++) {
+            if (tix[i] == ticketId) {
+                tix[i] = tix[tix.length - 1];
+                tix.pop();
+                break;
             }
         }
+
+        payable(msg.sender).transfer(refundAmount);
+        emit TicketReturned(msg.sender, ticket.eventId, ticketId, refundAmount);
     }
-    
-    // Function to withdraw contract's SETH balance (only owner)
+
+    function verifyTicket(address holder, uint256 ticketId) external view returns (bool) {
+        return tickets[ticketId].isValid && _balances[holder] > 0;
+    }
+
+    function getTicketDetails(address holder) external view returns (
+        uint256 balance,
+        uint256[] memory ticketIds,
+        string[] memory eventNames,
+        uint256[] memory purchaseTimes
+    ) {
+        balance = _balances[holder];
+        ticketIds = userTickets[holder];
+
+        eventNames = new string[](ticketIds.length);
+        purchaseTimes = new uint256[](ticketIds.length);
+
+        for (uint256 i = 0; i < ticketIds.length; i++) {
+            Ticket memory t = tickets[ticketIds[i]];
+            eventNames[i] = events[t.eventId].name;
+            purchaseTimes[i] = t.purchaseTime;
+        }
+    }
+
     function withdrawFunds() external {
         require(msg.sender == owner, "Only owner can withdraw");
         payable(owner).transfer(address(this).balance);
     }
+
+    receive() external payable {}
 }

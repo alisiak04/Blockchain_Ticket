@@ -1,8 +1,379 @@
-// Contract ABI and address (replace with your actual contract details)
+// Contract ABI and address 
 const contractABI = [
-    // Add your contract ABI here
+    {
+        "inputs": [
+            {
+                "internalType": "string",
+                "name": "_name",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "_symbol",
+                "type": "string"
+            },
+            {
+                "internalType": "uint8",
+                "name": "_decimals",
+                "type": "uint8"
+            }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "constructor"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "owner",
+                "type": "address"
+            },
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "spender",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "value",
+                "type": "uint256"
+            }
+        ],
+        "name": "Approval",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "buyer",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "ticketId",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "amount",
+                "type": "uint256"
+            }
+        ],
+        "name": "TicketPurchased",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "seller",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "ticketId",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "amount",
+                "type": "uint256"
+            }
+        ],
+        "name": "TicketReturned",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "from",
+                "type": "address"
+            },
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "to",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "value",
+                "type": "uint256"
+            }
+        ],
+        "name": "Transfer",
+        "type": "event"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "owner",
+                "type": "address"
+            },
+            {
+                "internalType": "address",
+                "name": "spender",
+                "type": "address"
+            }
+        ],
+        "name": "allowance",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "spender",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "amount",
+                "type": "uint256"
+            }
+        ],
+        "name": "approve",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+            }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "account",
+                "type": "address"
+            }
+        ],
+        "name": "balanceOf",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "decimals",
+        "outputs": [
+            {
+                "internalType": "uint8",
+                "name": "",
+                "type": "uint8"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "holder",
+                "type": "address"
+            }
+        ],
+        "name": "getTicketDetails",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "balance",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256[]",
+                "name": "ticketIds",
+                "type": "uint256[]"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "name",
+        "outputs": [
+            {
+                "internalType": "string",
+                "name": "",
+                "type": "string"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "owner",
+        "outputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "purchaseTicket",
+        "outputs": [],
+        "stateMutability": "payable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "returnTicket",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "symbol",
+        "outputs": [
+            {
+                "internalType": "string",
+                "name": "",
+                "type": "string"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "totalSupply",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "recipient",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "amount",
+                "type": "uint256"
+            }
+        ],
+        "name": "transfer",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+            }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "sender",
+                "type": "address"
+            },
+            {
+                "internalType": "address",
+                "name": "recipient",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "amount",
+                "type": "uint256"
+            }
+        ],
+        "name": "transferFrom",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+            }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "holder",
+                "type": "address"
+            }
+        ],
+        "name": "verifyTicket",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "withdrawFunds",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    }
 ];
-const contractAddress = 'YOUR_CONTRACT_ADDRESS';
+
+//get contract address from localStorage
+const contractAddress = localStorage.getItem('contractAddress');
 
 // DOM Elements
 const connectWalletBtn = document.getElementById('connectWallet');
@@ -16,31 +387,38 @@ const quantityDisplay = document.getElementById('quantityDisplay');
 const totalPrice = document.getElementById('totalPrice');
 
 // State variables
-let provider;
-let signer;
+let web3;
 let contract;
 let userAddress;
-const ticketPrice = ethers.utils.parseEther('0.1'); // 0.1 ETH per ticket
+const ticketPrice = '0.1'; // 0.1 ETH per ticket
 
-// Initialize ethers
-async function initEthers() {
-    if (window.ethereum) {
-        provider = new ethers.providers.Web3Provider(window.ethereum);
-        try {
-            // Request account access
-            await window.ethereum.request({ method: 'eth_requestAccounts' });
-            signer = provider.getSigner();
-            contract = new ethers.Contract(contractAddress, contractABI, signer);
-            userAddress = await signer.getAddress();
-            updateWalletStatus(true);
-            updatePurchaseButton();
-        } catch (error) {
-            console.error('Error initializing ethers:', error);
-            updateWalletStatus(false);
-        }
-    } else {
-        console.error('Please install MetaMask!');
+// Initialize Web3
+async function initWeb3() {
+    const walletAddress = localStorage.getItem('walletAddress');
+    const privateKey = localStorage.getItem('privateKey');
+
+    if (!walletAddress || !privateKey) {
+        showError('Please create a wallet first');
+        return false;
+    }
+
+    try {
+        // Connect to Sepolia network
+        web3 = new Web3('https://sepolia.infura.io/v3/YOUR_INFURA_KEY');
+        contract = new web3.eth.Contract(contractABI, contractAddress);
+        userAddress = walletAddress;
+        
+        // Add the private key to the wallet
+        web3.eth.accounts.wallet.add(privateKey);
+        
+        updateWalletStatus(true);
+        updatePurchaseButton();
+        return true;
+    } catch (error) {
+        console.error('Error initializing Web3:', error);
+        showError('Error connecting to wallet');
         updateWalletStatus(false);
+        return false;
     }
 }
 
@@ -66,9 +444,18 @@ function updatePurchaseButton() {
 // Update price display
 function updatePriceDisplay() {
     const quantity = parseInt(quantityInput.value) || 0;
-    const total = ticketPrice.mul(quantity);
+    const total = web3.utils.toWei((parseFloat(ticketPrice) * quantity).toString(), 'ether');
     quantityDisplay.textContent = quantity;
-    totalPrice.textContent = `${ethers.utils.formatEther(total)} ETH`;
+    totalPrice.textContent = `${web3.utils.fromWei(total, 'ether')} ETH`;
+}
+
+// Show error message
+function showError(message) {
+    const errorElement = document.createElement('div');
+    errorElement.className = 'error-message';
+    errorElement.textContent = message;
+    document.querySelector('.ticket-form').prepend(errorElement);
+    setTimeout(() => errorElement.remove(), 5000);
 }
 
 // Handle quantity changes
@@ -83,7 +470,7 @@ document.getElementById('ticketType').addEventListener('change', updatePurchaseB
 
 // Connect wallet button click handler
 connectWalletBtn.addEventListener('click', async () => {
-    await initEthers();
+    await initWeb3();
 });
 
 // Purchase ticket button click handler
@@ -100,21 +487,35 @@ purchaseTicketBtn.addEventListener('click', async () => {
         const quantity = parseInt(quantityInput.value);
 
         // Calculate total price
-        const totalAmount = ticketPrice.mul(quantity);
+        const totalAmount = web3.utils.toWei((parseFloat(ticketPrice) * quantity).toString(), 'ether');
 
-        // Send transaction
-        const tx = await contract.purchaseTicket(eventName, ticketType, quantity, {
-            value: totalAmount
-        });
+        // Get the nonce
+        const nonce = await web3.eth.getTransactionCount(userAddress, 'latest');
+        
+        // Get gas price
+        const gasPrice = await web3.eth.getGasPrice();
+        
+        // Estimate gas limit
+        const gasLimit = await contract.methods.purchaseTicket(eventName, ticketType, quantity)
+            .estimateGas({ from: userAddress, value: totalAmount });
+
+        // Create transaction
+        const transaction = {
+            from: userAddress,
+            to: contractAddress,
+            nonce: nonce,
+            gasPrice: gasPrice,
+            gasLimit: gasLimit,
+            value: totalAmount,
+            data: contract.methods.purchaseTicket(eventName, ticketType, quantity).encodeABI()
+        };
+
+        // Sign and send transaction
+        const signedTx = await web3.eth.accounts.signTransaction(transaction, localStorage.getItem('privateKey'));
+        const receipt = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
 
         // Show transaction hash
-        transactionHash.textContent = `Transaction Hash: ${tx.hash}`;
-        statusMessage.textContent = 'Transaction Submitted!';
-
-        // Wait for transaction confirmation
-        const receipt = await tx.wait();
-        
-        // Update status
+        transactionHash.textContent = `Transaction Hash: ${receipt.transactionHash}`;
         statusMessage.textContent = 'Transaction Successful!';
         transactionStatus.querySelector('.status-icon').style.background = '#27ae60';
         
@@ -129,6 +530,7 @@ purchaseTicketBtn.addEventListener('click', async () => {
         console.error('Error purchasing ticket:', error);
         statusMessage.textContent = 'Transaction Failed';
         transactionStatus.querySelector('.status-icon').style.background = '#e74c3c';
+        showError(error.message);
     }
 });
 
