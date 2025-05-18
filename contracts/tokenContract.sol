@@ -30,7 +30,7 @@ contract TicketToken is IERC20 {
 
     constructor(uint256 ticketPrice, uint256 initialTickets) {
         vendor = msg.sender;
-        ticketPriceInWei = ticketPrice; // e.g., 0.01 ETH = 10^16 wei
+        ticketPriceInWei = 1000000000000000; // 0.001 ETH in wei
         _totalSupply = initialTickets;
         _balances[vendor] = initialTickets;
         emit Transfer(address(0), vendor, initialTickets);

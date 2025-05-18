@@ -196,11 +196,25 @@ document.querySelectorAll('.role-btn').forEach(button => {
 // Update UI based on selected role
 function updateUIForRole() {
     const walletInput = document.querySelector('.wallet-input');
+    const balanceDetails = document.getElementById('balanceDetails');
+    const ticketDetails = document.getElementById('ticketDetails');
+    
+    // Hide all elements first
+    walletInput.style.display = 'none';
+    balanceDetails.classList.add('hidden');
+    ticketDetails.classList.add('hidden');
+    
     switch (currentRole) {
         case 'attendee':
+            walletInput.style.display = 'block';
+            document.getElementById('walletAddress').placeholder = "Enter your wallet address";
+            break;
+            
         case 'doorman':
             walletInput.style.display = 'block';
+            document.getElementById('walletAddress').placeholder = "Enter attendee's wallet address";
             break;
+            
         case 'venue':
             walletInput.style.display = 'none';
             checkVenueDistribution();
@@ -208,7 +222,7 @@ function updateUIForRole() {
     }
 }
 
-// Check balances
+// Check balances with role-specific behavior
 document.getElementById('checkBalanceBtn').addEventListener('click', async () => {
     if (!isInitialized || !contract) {
         showError("Contract not initialized. Please try again later.");
@@ -246,23 +260,27 @@ document.getElementById('checkBalanceBtn').addEventListener('click', async () =>
         document.getElementById('ethBalance').textContent = 
             `${web3.utils.fromWei(ethBalance, 'ether')} ETH`;
 
-        // Add gas estimation check
-        try {
-            const gasEstimate = await contract.methods.balanceOf(checksummedAddress).estimateGas();
-            console.log("Gas estimate for balanceOf:", gasEstimate);
-        } catch (gasError) {
-            console.error("Gas estimation failed:", gasError);
-        }
-
         console.log("Calling balanceOf with address:", checksummedAddress);
         const ticketBalance = await contract.methods.balanceOf(checksummedAddress).call();
         console.log("Ticket balance fetched:", ticketBalance);
-        document.getElementById('ticketBalance').textContent = 
-            `${ticketBalance} Tickets`;
+        
+        // Role-specific display
+        if (currentRole === 'doorman') {
+            document.getElementById('ticketBalance').textContent = 
+                ticketBalance > 0 ? "Valid Ticket Holder" : "No Valid Tickets";
+            document.getElementById('ticketDetails').classList.remove('hidden');
+            document.getElementById('ticketDetails').innerHTML = `
+                <h3>Ticket Verification</h3>
+                <p>Status: ${ticketBalance > 0 ? "✅ Valid" : "❌ Invalid"}</p>
+                <p>Number of Tickets: ${ticketBalance}</p>
+            `;
+        } else {
+            document.getElementById('ticketBalance').textContent = 
+                `${ticketBalance} Tickets`;
+        }
 
         document.getElementById('balanceDetails').classList.remove('hidden');
         document.getElementById('errorMessage').classList.add('hidden');
-        document.getElementById('ticketDetails').classList.add('hidden');
     } catch (error) {
         console.error("Detailed error:", error);
         if (error.message.includes("Out of Gas")) {
@@ -283,20 +301,39 @@ async function checkVenueDistribution() {
     }
 
     try {
+        // Get contract details
         const totalSupply = await contract.methods.totalSupply().call();
         const vendorAddress = await contract.methods.vendor().call();
         const availableTickets = await contract.methods.balanceOf(vendorAddress).call();
         const distributedTickets = totalSupply - availableTickets;
+        const contractBalance = await web3.eth.getBalance(contractAddress);
+        const ticketPrice = await contract.methods.ticketPriceInWei().call();
 
+        // Update UI with venue information
         document.getElementById('ethBalance').textContent = 
-            `${web3.utils.fromWei(await web3.eth.getBalance(contractAddress), 'ether')} ETH`;
+            `${web3.utils.fromWei(contractBalance, 'ether')} ETH`;
         document.getElementById('ticketBalance').textContent = 
             `${distributedTickets} Tickets Distributed`;
         
+        // Show additional venue details
+        const ticketDetails = document.getElementById('ticketDetails');
+        ticketDetails.classList.remove('hidden');
+        ticketDetails.innerHTML = `
+            <h3>Venue Details</h3>
+            <div class="venue-details">
+                <p>Total Tickets Created: ${totalSupply}</p>
+                <p>Available Tickets: ${availableTickets}</p>
+                <p>Distributed Tickets: ${distributedTickets}</p>
+                <p>Ticket Price: ${web3.utils.fromWei(ticketPrice, 'ether')} ETH</p>
+                <p>Vendor Address: ${vendorAddress}</p>
+            </div>
+        `;
+        
         document.getElementById('balanceDetails').classList.remove('hidden');
-        document.getElementById('ticketDetails').classList.add('hidden');
+        document.getElementById('errorMessage').classList.add('hidden');
     } catch (error) {
         showError("Error checking distribution: " + error.message);
+        console.error("Venue distribution error:", error);
     }
 }
 

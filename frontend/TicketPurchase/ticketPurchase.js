@@ -2,21 +2,8 @@
 const contractABI = [
     {
         "inputs": [
-            {
-                "internalType": "string",
-                "name": "_name",
-                "type": "string"
-            },
-            {
-                "internalType": "string",
-                "name": "_symbol",
-                "type": "string"
-            },
-            {
-                "internalType": "uint8",
-                "name": "_decimals",
-                "type": "uint8"
-            }
+            {"internalType": "uint256", "name": "ticketPrice", "type": "uint256"},
+            {"internalType": "uint256", "name": "initialTickets", "type": "uint256"}
         ],
         "stateMutability": "nonpayable",
         "type": "constructor"
@@ -24,356 +11,37 @@ const contractABI = [
     {
         "anonymous": false,
         "inputs": [
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "owner",
-                "type": "address"
-            },
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "spender",
-                "type": "address"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "value",
-                "type": "uint256"
-            }
-        ],
-        "name": "Approval",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "buyer",
-                "type": "address"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "ticketId",
-                "type": "uint256"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "amount",
-                "type": "uint256"
-            }
+            {"indexed": true, "internalType": "address", "name": "buyer", "type": "address"},
+            {"indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256"}
         ],
         "name": "TicketPurchased",
         "type": "event"
     },
     {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "seller",
-                "type": "address"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "ticketId",
-                "type": "uint256"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "amount",
-                "type": "uint256"
-            }
-        ],
-        "name": "TicketReturned",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "from",
-                "type": "address"
-            },
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "to",
-                "type": "address"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "value",
-                "type": "uint256"
-            }
-        ],
-        "name": "Transfer",
-        "type": "event"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "owner",
-                "type": "address"
-            },
-            {
-                "internalType": "address",
-                "name": "spender",
-                "type": "address"
-            }
-        ],
-        "name": "allowance",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "spender",
-                "type": "address"
-            },
-            {
-                "internalType": "uint256",
-                "name": "amount",
-                "type": "uint256"
-            }
-        ],
-        "name": "approve",
-        "outputs": [
-            {
-                "internalType": "bool",
-                "name": "",
-                "type": "bool"
-            }
-        ],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "account",
-                "type": "address"
-            }
-        ],
-        "name": "balanceOf",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "decimals",
-        "outputs": [
-            {
-                "internalType": "uint8",
-                "name": "",
-                "type": "uint8"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "holder",
-                "type": "address"
-            }
-        ],
-        "name": "getTicketDetails",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "balance",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256[]",
-                "name": "ticketIds",
-                "type": "uint256[]"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "name",
-        "outputs": [
-            {
-                "internalType": "string",
-                "name": "",
-                "type": "string"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "owner",
-        "outputs": [
-            {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "purchaseTicket",
+        "inputs": [{"internalType": "uint256", "name": "ticketAmount", "type": "uint256"}],
+        "name": "buyTicket",
         "outputs": [],
         "stateMutability": "payable",
         "type": "function"
     },
     {
-        "inputs": [],
-        "name": "returnTicket",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "symbol",
-        "outputs": [
-            {
-                "internalType": "string",
-                "name": "",
-                "type": "string"
-            }
-        ],
+        "inputs": [{"internalType": "address", "name": "account", "type": "address"}],
+        "name": "balanceOf",
+        "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
         "stateMutability": "view",
         "type": "function"
     },
     {
         "inputs": [],
-        "name": "totalSupply",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
+        "name": "ticketPriceInWei",
+        "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
         "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "recipient",
-                "type": "address"
-            },
-            {
-                "internalType": "uint256",
-                "name": "amount",
-                "type": "uint256"
-            }
-        ],
-        "name": "transfer",
-        "outputs": [
-            {
-                "internalType": "bool",
-                "name": "",
-                "type": "bool"
-            }
-        ],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "sender",
-                "type": "address"
-            },
-            {
-                "internalType": "address",
-                "name": "recipient",
-                "type": "address"
-            },
-            {
-                "internalType": "uint256",
-                "name": "amount",
-                "type": "uint256"
-            }
-        ],
-        "name": "transferFrom",
-        "outputs": [
-            {
-                "internalType": "bool",
-                "name": "",
-                "type": "bool"
-            }
-        ],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "holder",
-                "type": "address"
-            }
-        ],
-        "name": "verifyTicket",
-        "outputs": [
-            {
-                "internalType": "bool",
-                "name": "",
-                "type": "bool"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "withdrawFunds",
-        "outputs": [],
-        "stateMutability": "nonpayable",
         "type": "function"
     }
 ];
 
-//get contract address from localStorage
-const contractAddress = localStorage.getItem('contractAddress');
+const contractAddress = "0xAA6819E521379AC39A3CD779b406d1657205C1aB";
+const infuraUrl = "https://sepolia.infura.io/v3/5bbf9e76a9264d73a203e76c47bdac64";
 
 // DOM Elements
 const connectWalletBtn = document.getElementById('connectWallet');
@@ -382,41 +50,87 @@ const walletStatus = document.getElementById('walletStatus');
 const transactionStatus = document.getElementById('transactionStatus');
 const statusMessage = document.getElementById('statusMessage');
 const transactionHash = document.getElementById('transactionHash');
-const quantityInput = document.getElementById('quantity');
-const quantityDisplay = document.getElementById('quantityDisplay');
-const totalPrice = document.getElementById('totalPrice');
+const walletAddressInput = document.getElementById('walletAddress');
+const privateKeyInput = document.getElementById('privateKey');
 
 // State variables
 let web3;
 let contract;
 let userAddress;
-const ticketPrice = '0.1'; // 0.1 ETH per ticket
+let account;
 
 // Initialize Web3
 async function initWeb3() {
-    const walletAddress = localStorage.getItem('walletAddress');
-    const privateKey = localStorage.getItem('privateKey');
-
-    if (!walletAddress || !privateKey) {
-        showError('Please create a wallet first');
-        return false;
-    }
-
     try {
+        console.log('Starting Web3 initialization...');
+        
         // Connect to Sepolia network
-        web3 = new Web3('https://sepolia.infura.io/v3/YOUR_INFURA_KEY');
+        web3 = new Web3(infuraUrl);
+        console.log('Web3 instance created');
+        
+        const walletAddress = walletAddressInput.value.trim();
+        const privateKey = privateKeyInput.value.trim();
+        
+        console.log('Wallet address:', walletAddress);
+        console.log('Private key length:', privateKey.length);
+        
+        if (!walletAddress) {
+            console.log('No wallet address provided');
+            showError('Please enter your wallet address');
+            return false;
+        }
+
+        if (!privateKey) {
+            console.log('No private key provided');
+            showError('Please enter your private key');
+            return false;
+        }
+
+        if (!web3.utils.isAddress(walletAddress)) {
+            console.log('Invalid wallet address format');
+            showError('Please enter a valid Ethereum address');
+            return false;
+        }
+
+        console.log('Verifying private key...');
+        // Verify private key matches address
+        const derivedAddress = web3.eth.accounts.privateKeyToAccount(privateKey).address;
+        console.log('Derived address:', derivedAddress);
+        console.log('Input address:', walletAddress);
+        
+        if (derivedAddress.toLowerCase() !== walletAddress.toLowerCase()) {
+            console.log('Private key does not match wallet address');
+            showError('Private key does not match wallet address');
+            return false;
+        }
+
+        console.log('Adding account to web3...');
+        // Add account to web3
+        account = web3.eth.accounts.privateKeyToAccount(privateKey);
+        web3.eth.accounts.wallet.add(account);
+        
+        console.log('Creating contract instance...');
         contract = new web3.eth.Contract(contractABI, contractAddress);
         userAddress = walletAddress;
         
-        // Add the private key to the wallet
-        web3.eth.accounts.wallet.add(privateKey);
+        console.log('Checking ticket balance...');
+        // Check if user already has a ticket
+        const ticketBalance = await contract.methods.balanceOf(userAddress).call();
+        console.log('Ticket balance:', ticketBalance);
+        
+        if (ticketBalance > 0) {
+            console.log('User already has a ticket');
+            showError('You already have a ticket');
+            purchaseTicketBtn.disabled = true;
+        }
         
         updateWalletStatus(true);
         updatePurchaseButton();
+        console.log('Wallet connection successful');
         return true;
     } catch (error) {
-        console.error('Error initializing Web3:', error);
-        showError('Error connecting to wallet');
+        console.error('Detailed error in initWeb3:', error);
+        showError('Error connecting to wallet: ' + error.message);
         updateWalletStatus(false);
         return false;
     }
@@ -427,26 +141,23 @@ function updateWalletStatus(connected) {
     if (connected) {
         walletStatus.textContent = `Connected: ${userAddress.slice(0, 6)}...${userAddress.slice(-4)}`;
         walletStatus.style.color = '#27ae60';
+        walletAddressInput.disabled = true;
+        privateKeyInput.disabled = true;
     } else {
         walletStatus.textContent = 'Wallet not connected';
         walletStatus.style.color = '#e74c3c';
+        walletAddressInput.disabled = false;
+        privateKeyInput.disabled = false;
     }
 }
 
 // Update purchase button state
 function updatePurchaseButton() {
-    const isFormValid = document.getElementById('eventName').value &&
-                       document.getElementById('ticketType').value &&
-                       quantityInput.value > 0;
-    purchaseTicketBtn.disabled = !isFormValid;
-}
-
-// Update price display
-function updatePriceDisplay() {
-    const quantity = parseInt(quantityInput.value) || 0;
-    const total = web3.utils.toWei((parseFloat(ticketPrice) * quantity).toString(), 'ether');
-    quantityDisplay.textContent = quantity;
-    totalPrice.textContent = `${web3.utils.fromWei(total, 'ether')} ETH`;
+    if (!web3 || !account) {
+        purchaseTicketBtn.disabled = true;
+        return;
+    }
+    purchaseTicketBtn.disabled = false;
 }
 
 // Show error message
@@ -458,19 +169,11 @@ function showError(message) {
     setTimeout(() => errorElement.remove(), 5000);
 }
 
-// Handle quantity changes
-quantityInput.addEventListener('input', () => {
-    updatePriceDisplay();
-    updatePurchaseButton();
-});
-
-// Handle form input changes
-document.getElementById('eventName').addEventListener('input', updatePurchaseButton);
-document.getElementById('ticketType').addEventListener('change', updatePurchaseButton);
-
 // Connect wallet button click handler
 connectWalletBtn.addEventListener('click', async () => {
-    await initWeb3();
+    console.log('Connect wallet button clicked');
+    const success = await initWeb3();
+    console.log('Connection result:', success);
 });
 
 // Purchase ticket button click handler
@@ -481,13 +184,9 @@ purchaseTicketBtn.addEventListener('click', async () => {
         statusMessage.textContent = 'Processing Transaction...';
         transactionHash.textContent = '';
 
-        // Get form values
-        const eventName = document.getElementById('eventName').value;
-        const ticketType = document.getElementById('ticketType').value;
-        const quantity = parseInt(quantityInput.value);
-
-        // Calculate total price
-        const totalAmount = web3.utils.toWei((parseFloat(ticketPrice) * quantity).toString(), 'ether');
+        // Get ticket price from contract
+        const ticketPriceInWei = await contract.methods.ticketPriceInWei().call();
+        console.log("Ticket price in wei:", ticketPriceInWei);
 
         // Get the nonce
         const nonce = await web3.eth.getTransactionCount(userAddress, 'latest');
@@ -496,8 +195,8 @@ purchaseTicketBtn.addEventListener('click', async () => {
         const gasPrice = await web3.eth.getGasPrice();
         
         // Estimate gas limit
-        const gasLimit = await contract.methods.purchaseTicket(eventName, ticketType, quantity)
-            .estimateGas({ from: userAddress, value: totalAmount });
+        const gasLimit = await contract.methods.buyTicket(1)
+            .estimateGas({ from: userAddress, value: ticketPriceInWei });
 
         // Create transaction
         const transaction = {
@@ -506,25 +205,28 @@ purchaseTicketBtn.addEventListener('click', async () => {
             nonce: nonce,
             gasPrice: gasPrice,
             gasLimit: gasLimit,
-            value: totalAmount,
-            data: contract.methods.purchaseTicket(eventName, ticketType, quantity).encodeABI()
+            value: ticketPriceInWei,
+            data: contract.methods.buyTicket(1).encodeABI()
         };
 
-        // Sign and send transaction
-        const signedTx = await web3.eth.accounts.signTransaction(transaction, localStorage.getItem('privateKey'));
-        const receipt = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
+        console.log("Transaction details:", {
+            from: userAddress,
+            to: contractAddress,
+            value: web3.utils.fromWei(ticketPriceInWei, 'ether') + " ETH",
+            gasLimit: gasLimit
+        });
+
+        // Send transaction using the account
+        const receipt = await web3.eth.sendTransaction(transaction);
 
         // Show transaction hash
         transactionHash.textContent = `Transaction Hash: ${receipt.transactionHash}`;
-        statusMessage.textContent = 'Transaction Successful!';
+        statusMessage.textContent = 'Ticket Purchased Successfully!';
         transactionStatus.querySelector('.status-icon').style.background = '#27ae60';
         
-        // Reset form
-        document.getElementById('eventName').value = '';
-        document.getElementById('ticketType').value = '';
-        quantityInput.value = '1';
-        updatePriceDisplay();
-        updatePurchaseButton();
+        // Disable purchase button after successful purchase
+        purchaseTicketBtn.disabled = true;
+        showError('You have successfully purchased your ticket');
 
     } catch (error) {
         console.error('Error purchasing ticket:', error);
@@ -533,6 +235,3 @@ purchaseTicketBtn.addEventListener('click', async () => {
         showError(error.message);
     }
 });
-
-// Initialize price display
-updatePriceDisplay();
