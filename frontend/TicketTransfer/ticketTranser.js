@@ -1,4 +1,4 @@
-// Contract ABI and address (replace with your actual contract details)
+// Contract ABI and address
 const contractABI = [
     {
         "inputs": [
@@ -372,137 +372,96 @@ const contractABI = [
     }
 ];
 
-const contractAddress = "YOUR_DEPLOYED_CONTRACT_ADDRESS"; // Replace this with your actual deployed contract address
+const contractAddress = "0xAA6819E521379AC39A3CD779b406d1657205C1aB";
+const infuraUrl = "https://sepolia.infura.io/v3/5bbf9e76a9264d73a203e76c47bdac64";
 
 // DOM Elements
 const connectWalletBtn = document.getElementById('connectWallet');
 const transferTicketBtn = document.getElementById('transferTicket');
 const walletStatus = document.getElementById('walletStatus');
 const ticketBalance = document.getElementById('ticketBalance');
-const ticketIdSelect = document.getElementById('ticketId');
-const eventName = document.getElementById('eventName');
-const ticketType = document.getElementById('ticketType');
-const purchaseDate = document.getElementById('purchaseDate');
-const refundAmount = document.getElementById('refundAmount');
+const walletAddressInput = document.getElementById('walletAddress');
+const privateKeyInput = document.getElementById('privateKey');
 const transactionStatus = document.getElementById('transactionStatus');
 const statusMessage = document.getElementById('statusMessage');
 const transactionHash = document.getElementById('transactionHash');
 
-// State variables
 let web3;
 let contract;
 let userAddress;
-let userTickets = [];
 
-// Initialize Web3
 async function initWeb3() {
-    // Get wallet info from localStorage
-    const walletAddress = localStorage.getItem('walletAddress');
-    const privateKey = localStorage.getItem('privateKey');
-
-    if (!walletAddress || !privateKey) {
-        showError('Please create a wallet first');
-        return false;
-    }
-
     try {
-        // Connect to Sepolia network
-        web3 = new Web3('https://sepolia.infura.io/v3/YOUR_INFURA_KEY');
+      
+        web3 = new Web3(infuraUrl);
+        
+        const walletAddress = walletAddressInput.value.trim();
+        const privateKey = privateKeyInput.value.trim();
+        
+        if (!walletAddress) {
+            showError('Please enter your wallet address');
+            return false;
+        }
+
+        if (!privateKey) {
+            showError('Please enter your private key');
+            return false;
+        }
+
+        if (!web3.utils.isAddress(walletAddress)) {
+            showError('Please enter a valid Ethereum address');
+            return false;
+        }
+
+        //making contract instance
         contract = new web3.eth.Contract(contractABI, contractAddress);
         userAddress = walletAddress;
         
-        // Add the private key to the wallet
+        //checking private key matches address
+        const derivedAddress = web3.eth.accounts.privateKeyToAccount(privateKey).address;
+        if (derivedAddress.toLowerCase() !== walletAddress.toLowerCase()) {
+            showError('Private key does not match wallet address');
+            return false;
+        }
+        
+        //addin the private key to the wallet
         web3.eth.accounts.wallet.add(privateKey);
         
         updateWalletStatus(true);
-        await loadUserTickets();
+        await checkBalance();
         return true;
     } catch (error) {
         console.error('Error initializing Web3:', error);
-        showError('Error connecting to wallet');
+        showError('Error connecting to wallet: ' + error.message);
         updateWalletStatus(false);
         return false;
     }
 }
 
-// Update wallet connection status
 function updateWalletStatus(connected) {
     if (connected) {
         walletStatus.textContent = `Connected: ${userAddress.slice(0, 6)}...${userAddress.slice(-4)}`;
         walletStatus.style.color = '#27ae60';
+        walletAddressInput.disabled = true;
+        privateKeyInput.disabled = true;
     } else {
         walletStatus.textContent = 'Wallet not connected';
         walletStatus.style.color = '#e74c3c';
+        walletAddressInput.disabled = false;
+        privateKeyInput.disabled = false;
     }
 }
-
-// Load user's tickets
-async function loadUserTickets() {
+async function checkBalance() {
     try {
-        // Get user's ticket balance
         const balance = await contract.methods.balanceOf(userAddress).call();
         ticketBalance.textContent = balance.toString();
-        
-        // Get user's tickets
-        const ticketDetails = await contract.methods.getTicketDetails(userAddress).call();
-        userTickets = ticketDetails.ticketIds;
-        
-        // Update ticket selection dropdown
-        updateTicketSelection();
-        
-        // Enable transfer button if user has tickets
         transferTicketBtn.disabled = balance === '0';
     } catch (error) {
-        console.error('Error loading tickets:', error);
-        showError('Error loading tickets');
+        console.error('Error checking balance:', error);
+        showError('Error checking balance');
     }
 }
 
-// Update ticket selection dropdown
-function updateTicketSelection() {
-    // Clear existing options
-    ticketIdSelect.innerHTML = '<option value="">Select a ticket</option>';
-    
-    // Add ticket options
-    userTickets.forEach((ticketId, index) => {
-        const option = document.createElement('option');
-        option.value = index;
-        option.textContent = `Ticket #${ticketId}`;
-        ticketIdSelect.appendChild(option);
-    });
-}
-
-// Update ticket details display
-async function updateTicketDetails(ticketIndex) {
-    if (ticketIndex === '') {
-        eventName.textContent = '-';
-        ticketType.textContent = '-';
-        purchaseDate.textContent = '-';
-        refundAmount.textContent = '0 ETH';
-        return;
-    }
-
-    const ticketId = userTickets[ticketIndex];
-    
-    try {
-        // Get ticket details from contract
-        const ticketDetails = await contract.methods.getTicketDetails(ticketId).call();
-        
-        // Update display
-        eventName.textContent = ticketDetails.eventName;
-        ticketType.textContent = ticketDetails.ticketType;
-        purchaseDate.textContent = new Date(ticketDetails.purchaseDate * 1000).toLocaleDateString();
-        
-        // Calculate refund amount (80% of original price)
-        const refund = web3.utils.fromWei(ticketDetails.price, 'ether') * 0.8;
-        refundAmount.textContent = `${refund} ETH`;
-    } catch (error) {
-        console.error('Error getting ticket details:', error);
-        showError('Error getting ticket details');
-    }
-}
-
-// Show error message
 function showError(message) {
     const errorElement = document.createElement('div');
     errorElement.className = 'error-message';
@@ -511,64 +470,42 @@ function showError(message) {
     setTimeout(() => errorElement.remove(), 5000);
 }
 
-// Handle ticket selection change
-ticketIdSelect.addEventListener('change', () => {
-    updateTicketDetails(ticketIdSelect.value);
-});
-
-// Connect wallet button click handler
 connectWalletBtn.addEventListener('click', async () => {
     await initWeb3();
 });
 
-// Transfer ticket button click handler
 transferTicketBtn.addEventListener('click', async () => {
     try {
-        const ticketIndex = ticketIdSelect.value;
-        if (ticketIndex === '') return;
-
-        const ticketId = userTickets[ticketIndex];
-        
-        // Show transaction status
+        //show transaction status
         transactionStatus.classList.remove('hidden');
         statusMessage.textContent = 'Processing Transfer...';
         transactionHash.textContent = '';
 
-        // Get the nonce
+
         const nonce = await web3.eth.getTransactionCount(userAddress, 'latest');
-        
-        // Get gas price
         const gasPrice = await web3.eth.getGasPrice();
-        
-        // Estimate gas limit
-        const gasLimit = await contract.methods.transferTicketBack(ticketId)
+        const gasLimit = await contract.methods.returnTicket()
             .estimateGas({ from: userAddress });
 
-        // Create transaction
         const transaction = {
             from: userAddress,
             to: contractAddress,
             nonce: nonce,
             gasPrice: gasPrice,
             gasLimit: gasLimit,
-            data: contract.methods.transferTicketBack(ticketId).encodeABI()
+            data: contract.methods.returnTicket().encodeABI()
         };
 
-        // Sign and send transaction
-        const signedTx = await web3.eth.accounts.signTransaction(transaction, localStorage.getItem('privateKey'));
+        //sign and send transaction
+        const signedTx = await web3.eth.accounts.signTransaction(transaction, privateKeyInput.value);
         const receipt = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
 
-        // Show transaction hash
         transactionHash.textContent = `Transaction Hash: ${receipt.transactionHash}`;
         statusMessage.textContent = 'Transfer Successful!';
         transactionStatus.querySelector('.status-icon').style.background = '#27ae60';
         
-        // Reload user's tickets
-        await loadUserTickets();
-        
-        // Reset ticket selection
-        ticketIdSelect.value = '';
-        updateTicketDetails('');
+        //update balance
+        await checkBalance();
 
     } catch (error) {
         console.error('Error transferring ticket:', error);

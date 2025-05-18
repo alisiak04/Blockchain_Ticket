@@ -65,7 +65,7 @@ contract TicketToken is IERC20 {
         return true;
     }
 
-    // Buy a ticket by sending SETH to contract
+    //buying a ticket by sending SETH to the contract
     function buyTicket(uint256 ticketAmount) external payable {
         require(ticketAmount > 0, "Invalid ticket amount");
         require(msg.value == ticketAmount * ticketPriceInWei, "Incorrect ETH value");
@@ -77,7 +77,7 @@ contract TicketToken is IERC20 {
         emit TicketPurchased(msg.sender, ticketAmount);
     }
 
-    // Return ticket and get ETH refund
+    //return ticket and get ETH refund
     function returnTicket(uint256 ticketAmount) external {
         require(_balances[msg.sender] >= ticketAmount, "You don't have enough tickets");
 
@@ -88,13 +88,13 @@ contract TicketToken is IERC20 {
         emit TicketReturned(msg.sender, ticketAmount);
     }
 
-    // Withdraw funds (only vendor)
+    //withdraw funds -> only vendor
     function withdraw() external {
         require(msg.sender == vendor, "Only vendor can withdraw");
         payable(vendor).transfer(address(this).balance);
     }
 
-    // Internal functions
+ 
     function _transfer(address sender, address recipient, uint256 amount) internal {
         require(sender != address(0), "Zero address sender");
         require(recipient != address(0), "Zero address recipient");

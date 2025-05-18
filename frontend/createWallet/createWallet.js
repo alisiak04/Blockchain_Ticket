@@ -9,10 +9,6 @@ document.getElementById("createWalletBtn").addEventListener("click", () => {
   const web3 = new Web3();
   const wallet = web3.eth.accounts.create();
 
-  //wallet info goes into localStorage
-  localStorage.setItem('walletAddress', wallet.address);
-  localStorage.setItem('privateKey', wallet.privateKey);
-
   //showing user the wallet details
   document.getElementById("walletDetails").classList.remove("hidden");
   document.getElementById("walletAddress").value = wallet.address;
@@ -29,9 +25,6 @@ document.getElementById("createWalletBtn").addEventListener("click", () => {
   const downloadLink = document.getElementById("downloadKeystore");
   downloadLink.href = url;
   downloadLink.download = `${wallet.address}.json`;
-
-  //storing contract address
-  localStorage.setItem('contractAddress', '0xYourDeployedTicketTokenAddress'); 
 });
 
 function copyToClipboard(id) {

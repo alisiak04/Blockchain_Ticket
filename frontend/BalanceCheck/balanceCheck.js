@@ -165,7 +165,7 @@ let contract;
 let currentRole = 'attendee';
 let isInitialized = false;
 
-// Initialize Web3 and contract
+
 async function init() {
     console.log("Starting initialization...");
     try {
@@ -183,7 +183,7 @@ async function init() {
     }
 }
 
-// Handle role selection
+// 3 actors
 document.querySelectorAll('.role-btn').forEach(button => {
     button.addEventListener('click', () => {
         document.querySelectorAll('.role-btn').forEach(btn => btn.classList.remove('active'));
@@ -193,13 +193,13 @@ document.querySelectorAll('.role-btn').forEach(button => {
     });
 });
 
-// Update UI based on selected role
+
 function updateUIForRole() {
     const walletInput = document.querySelector('.wallet-input');
     const balanceDetails = document.getElementById('balanceDetails');
     const ticketDetails = document.getElementById('ticketDetails');
     
-    // Hide all elements first
+
     walletInput.style.display = 'none';
     balanceDetails.classList.add('hidden');
     ticketDetails.classList.add('hidden');
@@ -222,7 +222,7 @@ function updateUIForRole() {
     }
 }
 
-// Check balances with role-specific behavior
+//check balances with role-specific behaviour for 3 actors
 document.getElementById('checkBalanceBtn').addEventListener('click', async () => {
     if (!isInitialized || !contract) {
         showError("Contract not initialized. Please try again later.");
@@ -236,7 +236,7 @@ document.getElementById('checkBalanceBtn').addEventListener('click', async () =>
         return;
     }
 
-    // Convert to checksummed address
+    
     let checksummedAddress;
     try {
         checksummedAddress = web3.utils.toChecksumAddress(address);
@@ -247,7 +247,7 @@ document.getElementById('checkBalanceBtn').addEventListener('click', async () =>
     }
 
     try {
-        // First verify the contract is deployed
+       
         const code = await web3.eth.getCode(contractAddress);
         if (code === '0x' || code === '') {
             throw new Error('Contract is not deployed at the specified address');
@@ -264,7 +264,7 @@ document.getElementById('checkBalanceBtn').addEventListener('click', async () =>
         const ticketBalance = await contract.methods.balanceOf(checksummedAddress).call();
         console.log("Ticket balance fetched:", ticketBalance);
         
-        // Role-specific display
+
         if (currentRole === 'doorman') {
             document.getElementById('ticketBalance').textContent = 
                 ticketBalance > 0 ? "Valid Ticket Holder" : "No Valid Tickets";
@@ -293,7 +293,7 @@ document.getElementById('checkBalanceBtn').addEventListener('click', async () =>
     }
 });
 
-// Check venue distribution
+
 async function checkVenueDistribution() {
     if (!isInitialized || !contract) {
         showError("Contract not initialized. Please try again later.");
@@ -301,7 +301,7 @@ async function checkVenueDistribution() {
     }
 
     try {
-        // Get contract details
+        //getting the contract details
         const totalSupply = await contract.methods.totalSupply().call();
         const vendorAddress = await contract.methods.vendor().call();
         const availableTickets = await contract.methods.balanceOf(vendorAddress).call();
@@ -309,13 +309,13 @@ async function checkVenueDistribution() {
         const contractBalance = await web3.eth.getBalance(contractAddress);
         const ticketPrice = await contract.methods.ticketPriceInWei().call();
 
-        // Update UI with venue information
+        
         document.getElementById('ethBalance').textContent = 
             `${web3.utils.fromWei(contractBalance, 'ether')} ETH`;
         document.getElementById('ticketBalance').textContent = 
             `${distributedTickets} Tickets Distributed`;
         
-        // Show additional venue details
+       
         const ticketDetails = document.getElementById('ticketDetails');
         ticketDetails.classList.remove('hidden');
         ticketDetails.innerHTML = `
@@ -337,7 +337,7 @@ async function checkVenueDistribution() {
     }
 }
 
-// Show error message
+
 function showError(message) {
     const errorElement = document.getElementById('errorMessage');
     errorElement.textContent = message;
@@ -345,10 +345,10 @@ function showError(message) {
     document.getElementById('balanceDetails').classList.add('hidden');
 }
 
-// Initialize when page loads
+
 window.addEventListener('load', async () => {
     await init();
-    // Test Infura sync
+    //test Infura sync
     try {
         const blockNumber = await web3.eth.getBlockNumber();
         console.log("Infura block number:", blockNumber);

@@ -43,7 +43,7 @@ const contractABI = [
 const contractAddress = "0xAA6819E521379AC39A3CD779b406d1657205C1aB";
 const infuraUrl = "https://sepolia.infura.io/v3/5bbf9e76a9264d73a203e76c47bdac64";
 
-// DOM Elements
+//DOM Elements
 const connectWalletBtn = document.getElementById('connectWallet');
 const purchaseTicketBtn = document.getElementById('purchaseTicket');
 const walletStatus = document.getElementById('walletStatus');
@@ -53,18 +53,16 @@ const transactionHash = document.getElementById('transactionHash');
 const walletAddressInput = document.getElementById('walletAddress');
 const privateKeyInput = document.getElementById('privateKey');
 
-// State variables
 let web3;
 let contract;
 let userAddress;
 let account;
 
-// Initialize Web3
 async function initWeb3() {
     try {
         console.log('Starting Web3 initialization...');
         
-        // Connect to Sepolia network
+        //connecting to Sepolia network
         web3 = new Web3(infuraUrl);
         console.log('Web3 instance created');
         
@@ -93,7 +91,7 @@ async function initWeb3() {
         }
 
         console.log('Verifying private key...');
-        // Verify private key matches address
+        //verify private key matches address
         const derivedAddress = web3.eth.accounts.privateKeyToAccount(privateKey).address;
         console.log('Derived address:', derivedAddress);
         console.log('Input address:', walletAddress);
@@ -105,7 +103,6 @@ async function initWeb3() {
         }
 
         console.log('Adding account to web3...');
-        // Add account to web3
         account = web3.eth.accounts.privateKeyToAccount(privateKey);
         web3.eth.accounts.wallet.add(account);
         
@@ -114,7 +111,7 @@ async function initWeb3() {
         userAddress = walletAddress;
         
         console.log('Checking ticket balance...');
-        // Check if user already has a ticket
+        //check if user already has a ticket
         const ticketBalance = await contract.methods.balanceOf(userAddress).call();
         console.log('Ticket balance:', ticketBalance);
         
@@ -136,7 +133,6 @@ async function initWeb3() {
     }
 }
 
-// Update wallet connection status
 function updateWalletStatus(connected) {
     if (connected) {
         walletStatus.textContent = `Connected: ${userAddress.slice(0, 6)}...${userAddress.slice(-4)}`;
@@ -151,7 +147,6 @@ function updateWalletStatus(connected) {
     }
 }
 
-// Update purchase button state
 function updatePurchaseButton() {
     if (!web3 || !account) {
         purchaseTicketBtn.disabled = true;
@@ -160,7 +155,6 @@ function updatePurchaseButton() {
     purchaseTicketBtn.disabled = false;
 }
 
-// Show error message
 function showError(message) {
     const errorElement = document.createElement('div');
     errorElement.className = 'error-message';
@@ -169,36 +163,29 @@ function showError(message) {
     setTimeout(() => errorElement.remove(), 5000);
 }
 
-// Connect wallet button click handler
 connectWalletBtn.addEventListener('click', async () => {
     console.log('Connect wallet button clicked');
     const success = await initWeb3();
     console.log('Connection result:', success);
 });
 
-// Purchase ticket button click handler
 purchaseTicketBtn.addEventListener('click', async () => {
     try {
-        // Show transaction status
+        //showing transaction status
         transactionStatus.classList.remove('hidden');
         statusMessage.textContent = 'Processing Transaction...';
         transactionHash.textContent = '';
 
-        // Get ticket price from contract
+        //ticket price from contract
         const ticketPriceInWei = await contract.methods.ticketPriceInWei().call();
         console.log("Ticket price in wei:", ticketPriceInWei);
-
-        // Get the nonce
         const nonce = await web3.eth.getTransactionCount(userAddress, 'latest');
-        
-        // Get gas price
         const gasPrice = await web3.eth.getGasPrice();
         
-        // Estimate gas limit
         const gasLimit = await contract.methods.buyTicket(1)
             .estimateGas({ from: userAddress, value: ticketPriceInWei });
 
-        // Create transaction
+        //create transaction
         const transaction = {
             from: userAddress,
             to: contractAddress,
@@ -216,15 +203,15 @@ purchaseTicketBtn.addEventListener('click', async () => {
             gasLimit: gasLimit
         });
 
-        // Send transaction using the account
+        //Sending transaction using the account
         const receipt = await web3.eth.sendTransaction(transaction);
 
-        // Show transaction hash
+        //Show transaction hash
         transactionHash.textContent = `Transaction Hash: ${receipt.transactionHash}`;
         statusMessage.textContent = 'Ticket Purchased Successfully!';
         transactionStatus.querySelector('.status-icon').style.background = '#27ae60';
         
-        // Disable purchase button after successful purchase
+        //disable purchase button after a successful purchase
         purchaseTicketBtn.disabled = true;
         showError('You have successfully purchased your ticket');
 
