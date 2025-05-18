@@ -94,7 +94,7 @@ const contractABI = [
         "type": "function"
     },
     {
-        "inputs": [],
+        "inputs": [{"internalType": "uint256", "name": "ticketAmount", "type": "uint256"}],
         "name": "returnTicket",
         "outputs": [],
         "stateMutability": "nonpayable",
@@ -157,23 +157,29 @@ const contractABI = [
         "type": "function"
     }
 ];
-const contractAddress = "0xAA6819E521379AC39A3CD779b406d1657205C1aB"; // Your contract address here
+const contractAddress = "0xAA6819E521379AC39A3CD779b406d1657205C1aB";
 const infuraProjectId = "5bbf9e76a9264d73a203e76c47bdac64";
 
 let web3;
 let contract;
 let currentRole = 'attendee';
-
+let isInitialized = false;
 
 // Initialize Web3 and contract
 async function init() {
+    console.log("Starting initialization...");
     try {
-        // Connect to Sepolia network via Infura
         const infuraUrl = "https://sepolia.infura.io/v3/5bbf9e76a9264d73a203e76c47bdac64";
+        console.log("Connecting to:", infuraUrl);
         web3 = new Web3(infuraUrl);
+        console.log("Web3 initialized, version:", web3.version);
+        console.log("Attempting to create contract with address:", contractAddress);
         contract = new web3.eth.Contract(contractABI, contractAddress);
+        console.log("Contract initialized successfully");
+        isInitialized = true;
     } catch (error) {
         showError("Error connecting to network: " + error.message);
+        console.error("Init error details:", error);
     }
 }
 
@@ -190,7 +196,7 @@ document.querySelectorAll('.role-btn').forEach(button => {
 // Update UI based on selected role
 function updateUIForRole() {
     const walletInput = document.querySelector('.wallet-input');
-    switch(currentRole) {
+    switch (currentRole) {
         case 'attendee':
         case 'doorman':
             walletInput.style.display = 'block';
@@ -204,58 +210,82 @@ function updateUIForRole() {
 
 // Check balances
 document.getElementById('checkBalanceBtn').addEventListener('click', async () => {
-    const address = document.getElementById('walletAddress').value;
+    if (!isInitialized || !contract) {
+        showError("Contract not initialized. Please try again later.");
+        return;
+    }
+
+    const address = document.getElementById('walletAddress').value.trim();
+    console.log("Checking balance for address:", address);
     if (!web3.utils.isAddress(address)) {
         showError("Please enter a valid Ethereum address");
         return;
     }
 
+    // Convert to checksummed address
+    let checksummedAddress;
     try {
-        // Get ETH balance
-        const ethBalance = await web3.eth.getBalance(address);
+        checksummedAddress = web3.utils.toChecksumAddress(address);
+        console.log("Checksummed address:", checksummedAddress);
+    } catch (error) {
+        showError("Invalid address checksum: " + error.message);
+        return;
+    }
+
+    try {
+        // First verify the contract is deployed
+        const code = await web3.eth.getCode(contractAddress);
+        if (code === '0x' || code === '') {
+            throw new Error('Contract is not deployed at the specified address');
+        }
+        console.log("Contract code exists at address");
+
+        console.log("Fetching ETH balance...");
+        const ethBalance = await web3.eth.getBalance(checksummedAddress);
+        console.log("ETH balance fetched:", ethBalance);
         document.getElementById('ethBalance').textContent = 
             `${web3.utils.fromWei(ethBalance, 'ether')} ETH`;
 
-        // Get ticket balance
-        const ticketBalance = await contract.methods.balanceOf(address).call();
+        // Add gas estimation check
+        try {
+            const gasEstimate = await contract.methods.balanceOf(checksummedAddress).estimateGas();
+            console.log("Gas estimate for balanceOf:", gasEstimate);
+        } catch (gasError) {
+            console.error("Gas estimation failed:", gasError);
+        }
+
+        console.log("Calling balanceOf with address:", checksummedAddress);
+        const ticketBalance = await contract.methods.balanceOf(checksummedAddress).call();
+        console.log("Ticket balance fetched:", ticketBalance);
         document.getElementById('ticketBalance').textContent = 
             `${ticketBalance} Tickets`;
 
-        // Get ticket details if balance > 0
-        if (ticketBalance > 0) {
-            const ticketDetails = await contract.methods.getTicketDetails(address).call();
-            displayTicketDetails(ticketDetails);
-        } else {
-            document.getElementById('ticketDetails').classList.add('hidden');
-        }
-
         document.getElementById('balanceDetails').classList.remove('hidden');
         document.getElementById('errorMessage').classList.add('hidden');
+        document.getElementById('ticketDetails').classList.add('hidden');
     } catch (error) {
-        showError("Error checking balances: " + error.message);
+        console.error("Detailed error:", error);
+        if (error.message.includes("Out of Gas")) {
+            showError("Transaction would run out of gas. This might indicate a problem with the contract or network.");
+        } else if (error.message.includes("not deployed")) {
+            showError("The contract is not deployed at the specified address. Please verify the contract address.");
+        } else {
+            showError("Error checking balances: " + error.message);
+        }
     }
 });
 
-// Display ticket details
-function displayTicketDetails(ticketDetails) {
-    const ticketList = document.getElementById('ticketList');
-    ticketList.innerHTML = '';
-    
-    ticketDetails.ticketIds.forEach(ticketId => {
-        const ticketElement = document.createElement('div');
-        ticketElement.className = 'ticket-item';
-        ticketElement.textContent = `Ticket #${ticketId}`;
-        ticketList.appendChild(ticketElement);
-    });
-
-    document.getElementById('ticketDetails').classList.remove('hidden');
-}
-
 // Check venue distribution
 async function checkVenueDistribution() {
+    if (!isInitialized || !contract) {
+        showError("Contract not initialized. Please try again later.");
+        return;
+    }
+
     try {
         const totalSupply = await contract.methods.totalSupply().call();
-        const availableTickets = await contract.methods.balanceOf(contractAddress).call();
+        const vendorAddress = await contract.methods.vendor().call();
+        const availableTickets = await contract.methods.balanceOf(vendorAddress).call();
         const distributedTickets = totalSupply - availableTickets;
 
         document.getElementById('ethBalance').textContent = 
@@ -275,7 +305,17 @@ function showError(message) {
     const errorElement = document.getElementById('errorMessage');
     errorElement.textContent = message;
     errorElement.classList.remove('hidden');
+    document.getElementById('balanceDetails').classList.add('hidden');
 }
 
 // Initialize when page loads
-window.addEventListener('load', init);
+window.addEventListener('load', async () => {
+    await init();
+    // Test Infura sync
+    try {
+        const blockNumber = await web3.eth.getBlockNumber();
+        console.log("Infura block number:", blockNumber);
+    } catch (error) {
+        console.error("Infura sync test failed:", error.message);
+    }
+});
