@@ -1,22 +1,8 @@
-// Contract ABI - This should match your deployed contract
 const contractABI = [
     {
         "inputs": [
-            {
-                "internalType": "string",
-                "name": "_name",
-                "type": "string"
-            },
-            {
-                "internalType": "string",
-                "name": "_symbol",
-                "type": "string"
-            },
-            {
-                "internalType": "uint8",
-                "name": "_decimals",
-                "type": "uint8"
-            }
+            {"internalType": "uint256", "name": "ticketPrice", "type": "uint256"},
+            {"internalType": "uint256", "name": "initialTickets", "type": "uint256"}
         ],
         "stateMutability": "nonpayable",
         "type": "constructor"
@@ -24,24 +10,9 @@ const contractABI = [
     {
         "anonymous": false,
         "inputs": [
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "owner",
-                "type": "address"
-            },
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "spender",
-                "type": "address"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "value",
-                "type": "uint256"
-            }
+            {"indexed": true, "internalType": "address", "name": "owner", "type": "address"},
+            {"indexed": true, "internalType": "address", "name": "spender", "type": "address"},
+            {"indexed": false, "internalType": "uint256", "name": "value", "type": "uint256"}
         ],
         "name": "Approval",
         "type": "event"
@@ -49,24 +20,8 @@ const contractABI = [
     {
         "anonymous": false,
         "inputs": [
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "buyer",
-                "type": "address"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "ticketId",
-                "type": "uint256"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "amount",
-                "type": "uint256"
-            }
+            {"indexed": true, "internalType": "address", "name": "buyer", "type": "address"},
+            {"indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256"}
         ],
         "name": "TicketPurchased",
         "type": "event"
@@ -74,24 +29,8 @@ const contractABI = [
     {
         "anonymous": false,
         "inputs": [
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "seller",
-                "type": "address"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "ticketId",
-                "type": "uint256"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "amount",
-                "type": "uint256"
-            }
+            {"indexed": true, "internalType": "address", "name": "holder", "type": "address"},
+            {"indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256"}
         ],
         "name": "TicketReturned",
         "type": "event"
@@ -99,163 +38,59 @@ const contractABI = [
     {
         "anonymous": false,
         "inputs": [
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "from",
-                "type": "address"
-            },
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "to",
-                "type": "address"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "value",
-                "type": "uint256"
-            }
+            {"indexed": true, "internalType": "address", "name": "from", "type": "address"},
+            {"indexed": true, "internalType": "address", "name": "to", "type": "address"},
+            {"indexed": false, "internalType": "uint256", "name": "value", "type": "uint256"}
         ],
         "name": "Transfer",
         "type": "event"
     },
     {
         "inputs": [
-            {
-                "internalType": "address",
-                "name": "owner",
-                "type": "address"
-            },
-            {
-                "internalType": "address",
-                "name": "spender",
-                "type": "address"
-            }
+            {"internalType": "address", "name": "owner", "type": "address"},
+            {"internalType": "address", "name": "spender", "type": "address"}
         ],
         "name": "allowance",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
+        "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
         "stateMutability": "view",
         "type": "function"
     },
     {
         "inputs": [
-            {
-                "internalType": "address",
-                "name": "spender",
-                "type": "address"
-            },
-            {
-                "internalType": "uint256",
-                "name": "amount",
-                "type": "uint256"
-            }
+            {"internalType": "address", "name": "spender", "type": "address"},
+            {"internalType": "uint256", "name": "amount", "type": "uint256"}
         ],
         "name": "approve",
-        "outputs": [
-            {
-                "internalType": "bool",
-                "name": "",
-                "type": "bool"
-            }
-        ],
+        "outputs": [{"internalType": "bool", "name": "", "type": "bool"}],
         "stateMutability": "nonpayable",
         "type": "function"
     },
     {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "account",
-                "type": "address"
-            }
-        ],
+        "inputs": [{"internalType": "address", "name": "account", "type": "address"}],
         "name": "balanceOf",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
+        "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
         "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [{"internalType": "uint256", "name": "ticketAmount", "type": "uint256"}],
+        "name": "buyTicket",
+        "outputs": [],
+        "stateMutability": "payable",
         "type": "function"
     },
     {
         "inputs": [],
         "name": "decimals",
-        "outputs": [
-            {
-                "internalType": "uint8",
-                "name": "",
-                "type": "uint8"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "holder",
-                "type": "address"
-            }
-        ],
-        "name": "getTicketDetails",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "balance",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256[]",
-                "name": "ticketIds",
-                "type": "uint256[]"
-            }
-        ],
+        "outputs": [{"internalType": "uint8", "name": "", "type": "uint8"}],
         "stateMutability": "view",
         "type": "function"
     },
     {
         "inputs": [],
         "name": "name",
-        "outputs": [
-            {
-                "internalType": "string",
-                "name": "",
-                "type": "string"
-            }
-        ],
+        "outputs": [{"internalType": "string", "name": "", "type": "string"}],
         "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "owner",
-        "outputs": [
-            {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "purchaseTicket",
-        "outputs": [],
-        "stateMutability": "payable",
         "type": "function"
     },
     {
@@ -268,122 +103,74 @@ const contractABI = [
     {
         "inputs": [],
         "name": "symbol",
-        "outputs": [
-            {
-                "internalType": "string",
-                "name": "",
-                "type": "string"
-            }
-        ],
+        "outputs": [{"internalType": "string", "name": "", "type": "string"}],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "ticketPriceInWei",
+        "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
         "stateMutability": "view",
         "type": "function"
     },
     {
         "inputs": [],
         "name": "totalSupply",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
+        "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
         "stateMutability": "view",
         "type": "function"
     },
     {
         "inputs": [
-            {
-                "internalType": "address",
-                "name": "recipient",
-                "type": "address"
-            },
-            {
-                "internalType": "uint256",
-                "name": "amount",
-                "type": "uint256"
-            }
+            {"internalType": "address", "name": "recipient", "type": "address"},
+            {"internalType": "uint256", "name": "amount", "type": "uint256"}
         ],
         "name": "transfer",
-        "outputs": [
-            {
-                "internalType": "bool",
-                "name": "",
-                "type": "bool"
-            }
-        ],
+        "outputs": [{"internalType": "bool", "name": "", "type": "bool"}],
         "stateMutability": "nonpayable",
         "type": "function"
     },
     {
         "inputs": [
-            {
-                "internalType": "address",
-                "name": "sender",
-                "type": "address"
-            },
-            {
-                "internalType": "address",
-                "name": "recipient",
-                "type": "address"
-            },
-            {
-                "internalType": "uint256",
-                "name": "amount",
-                "type": "uint256"
-            }
+            {"internalType": "address", "name": "sender", "type": "address"},
+            {"internalType": "address", "name": "recipient", "type": "address"},
+            {"internalType": "uint256", "name": "amount", "type": "uint256"}
         ],
         "name": "transferFrom",
-        "outputs": [
-            {
-                "internalType": "bool",
-                "name": "",
-                "type": "bool"
-            }
-        ],
+        "outputs": [{"internalType": "bool", "name": "", "type": "bool"}],
         "stateMutability": "nonpayable",
         "type": "function"
     },
     {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "holder",
-                "type": "address"
-            }
-        ],
-        "name": "verifyTicket",
-        "outputs": [
-            {
-                "internalType": "bool",
-                "name": "",
-                "type": "bool"
-            }
-        ],
+        "inputs": [],
+        "name": "vendor",
+        "outputs": [{"internalType": "address", "name": "", "type": "address"}],
         "stateMutability": "view",
         "type": "function"
     },
     {
         "inputs": [],
-        "name": "withdrawFunds",
+        "name": "withdraw",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
     }
 ];
-
-// Contract address - Replace with your deployed contract address
-const contractAddress = "YOUR_DEPLOYED_CONTRACT_ADDRESS"; // Replace this with your actual deployed contract address
+const contractAddress = "0xAA6819E521379AC39A3CD779b406d1657205C1aB"; // Your contract address here
+const infuraProjectId = "5bbf9e76a9264d73a203e76c47bdac64";
 
 let web3;
 let contract;
 let currentRole = 'attendee';
 
+
 // Initialize Web3 and contract
 async function init() {
     try {
-        // Connect to Sepolia network
-        web3 = new Web3('https://sepolia.infura.io/v3/YOUR_INFURA_KEY');
+        // Connect to Sepolia network via Infura
+        const infuraUrl = "https://sepolia.infura.io/v3/5bbf9e76a9264d73a203e76c47bdac64";
+        web3 = new Web3(infuraUrl);
         contract = new web3.eth.Contract(contractABI, contractAddress);
     } catch (error) {
         showError("Error connecting to network: " + error.message);
@@ -405,8 +192,6 @@ function updateUIForRole() {
     const walletInput = document.querySelector('.wallet-input');
     switch(currentRole) {
         case 'attendee':
-            walletInput.style.display = 'block';
-            break;
         case 'doorman':
             walletInput.style.display = 'block';
             break;
@@ -456,7 +241,7 @@ function displayTicketDetails(ticketDetails) {
     const ticketList = document.getElementById('ticketList');
     ticketList.innerHTML = '';
     
-    ticketDetails.ticketIds.forEach((ticketId, index) => {
+    ticketDetails.ticketIds.forEach(ticketId => {
         const ticketElement = document.createElement('div');
         ticketElement.className = 'ticket-item';
         ticketElement.textContent = `Ticket #${ticketId}`;
